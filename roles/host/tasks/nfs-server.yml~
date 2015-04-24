@@ -1,0 +1,42 @@
+- hosts: all
+  sudo: yes
+
+  vars:
+    datadir: /srv/atomic
+    netblock: 192.168.42.0/24
+
+  tasks:
+    - name: Ensure NFS export directory
+      file: path={{ datadir }} mode=755 state=directory
+    
+    - name: setup /etc/exports
+      template: src=files/exports dest=/etc/exports
+      register: exports
+      tags:
+      - nfs/server
+    
+    - name: enable nfs-related services and run them (fedora)
+      action: service name={{ item }}  enabled=true state=started
+      with_items:
+      - nfs-idmap
+      - rpc-statd
+      when: ansible_distribution == 'Fedora'
+      tags:
+      - nfs/server
+    
+    - name: enable nfs-related services and run them (rhel)
+      action: service name={{ item }}  enabled=true state=started
+      with_items:
+      - rpcbind
+      - nfs-server
+      - nfs-lock
+      when: ansible_distribution == 'RedHat'
+      tags:
+      - nfs/server
+    
+    - name: Kick exportfs if /etc/exports changed
+      command: /usr/sbin/exportfs -ra
+      when: exports.changed
+      tags:
+      - nfs/server
+    
