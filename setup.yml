@@ -1,0 +1,18 @@
+---
+- hosts: gateway
+  sudo: yes
+  roles:
+          - common
+          - gateway
+
+- hosts: host
+  sudo: yes
+  roles:
+          - common
+          - host
+
+- hosts: nodes
+  sudo: yes
+  roles:
+          - common
+          - node

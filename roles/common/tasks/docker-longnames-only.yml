@@ -1,0 +1,30 @@
+# This playbook basically enforces long names; it turns off automatic
+# short name resolution to the Docker Hub and the RHEL registry.  It
+# does *not* actually disable access to other registries; for example
+# kuberentes-ansible will set up things to pull from quay.io.  If you
+# actually want to block external repositories, ideally Docker would
+# have --whitelist-registry instead of --block-registry which requires
+# you to play whack-a-mole.  Or more strongly, you can just use this
+# on machines which are firewalled from the Internet of course.
+
+---
+- name: Docker packages
+  yum: name={{ item }} state=present
+  with_items:
+    - docker
+  tags:
+    - docker
+
+- name: Disable Docker ADD_REGISTRY
+  lineinfile: dest=/etc/sysconfig/docker regexp='^(ADD_REGISTRY.*)' line='#\1' backrefs=yes
+  notify:
+    - restart docker
+  tags:
+    - docker
+
+- name: Ensure Docker hub is blocked via BLOCK_REGISTRY
+  lineinfile: dest=/etc/sysconfig/docker regexp="^#* *BLOCK_REGISTRY=" line="BLOCK_REGISTRY='--block-registry docker.io'" backrefs=yes
+  notify:
+    - restart docker
+  tags:
+    - docker

@@ -1,0 +1,14 @@
+- name: Check F22 Docker base image
+  command: "docker inspect fedora:22"
+  failed_when: false
+  changed_when: false
+  register: have_docker_f22
+  tags:
+    - docker
+
+- name: Load F22 Docker base image
+  shell: "curl {{ docker_f22_url }} | xz -d | docker load && docker tag {{ docker_f22_tag }} fedora:22 && docker rmi {{ docker_f22_tag }}"
+  when: have_docker_f22.rc != 0
+  tags:
+    - docker
+

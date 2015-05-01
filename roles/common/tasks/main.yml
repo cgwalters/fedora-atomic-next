@@ -1,0 +1,2 @@
+---
+- include: docker-longnames-only.yml

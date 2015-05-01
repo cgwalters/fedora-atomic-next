@@ -1,0 +1,10 @@
+- name: Ensure NFS mount directory
+  file: path={{ datadir }} mode=755 state=directory
+
+- name: setup NFS mount
+  template: src=nfs-mount.j2 dest=/etc/systemd/system/srv-atomic.mount
+  with_items:
+    - { server: "{{ server }}", datadir: "{{ datadir }}", mountpoint: "{{ datadir }}" }
+
+- name: enable NFS mount
+  action: service name=srv-atomic.mount enabled=true state=started

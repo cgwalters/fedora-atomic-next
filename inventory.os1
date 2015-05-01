@@ -1,5 +1,5 @@
-[host]
-atomic01.qa.fedoraproject.org
+[gateway]
+10.3.12.156
 
 [masters]
 192.168.42.9
@@ -7,7 +7,7 @@ atomic01.qa.fedoraproject.org
 [etcd]
 192.168.42.9
 
-[minions]
+[nodes]
 192.168.42.10
 192.168.42.11
 192.168.42.12

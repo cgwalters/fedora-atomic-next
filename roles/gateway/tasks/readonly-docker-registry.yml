@@ -1,0 +1,20 @@
+# Implement a read-only registry frontend proxy.  Content to be
+# published has to be uploaded via ssh and pushed locally.
+#
+# Based on http://mindtrove.info/control-read-write-access-docker-private-registry/
+# but converted to use Apache
+
+---
+- yum: name={{ item }} state=present
+  with_items:
+    - httpd
+    - docker-registry
+
+- name: ensure docker-registry backend is only on localhost
+  lineinfile: dest=/etc/sysconfig/docker-registry regexp='^REGISTRY_ADDRESS' line='REGISTRY_ADDRESS=127.0.0.1' backrefs=yes
+
+- name: start and enable docker-registry
+  service: name=docker-registry state=started enabled=yes
+
+- name: start and enable httpd
+  service: name=httpd state=started enabled=yes

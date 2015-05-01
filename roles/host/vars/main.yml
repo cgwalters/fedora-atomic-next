@@ -1,0 +1,4 @@
+datadir: /srv/atomic
+netblock: 192.168.42.0/24
+docker_f22_url: "https://{{ infra_mirror_host }}/pub/alt/stage/22_Beta_TC8/Docker/x86_64/Fedora-Docker-Base-22_Beta_TC8-20150405.x86_64.tar.xz"
+docker_f22_tag: Fedora-Docker-Base-22_Beta_TC8-20150405.x86_64

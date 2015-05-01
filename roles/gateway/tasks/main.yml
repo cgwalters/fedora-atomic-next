@@ -1,0 +1,3 @@
+---
+- include: readonly-docker-registry.yml
+# - include: pulp.yml

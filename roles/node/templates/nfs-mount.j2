@@ -1,0 +1,9 @@
+[Unit]
+Description={{ item.mountpoint }}
+Wants=rpc-statd.service
+After=network.target rcp-statd.service
+
+[Mount]
+What={{ item.server }}:{{ item.datadir }}
+Where={{ item.datadir }}
+Type=nfs

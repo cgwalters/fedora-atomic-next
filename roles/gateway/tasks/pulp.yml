@@ -1,0 +1,42 @@
+# Install Pulp via RPM, set up for Docker  Somewhat similar to
+# https://github.com/RedHatQE/pulp-automation/blob/master/deploy/ansible/roles/pulp/tasks/main.yml
+# Not currently used.
+
+---
+- name: Install Fedora pulp repo
+  copy: src=fedora-pulp.repo dest=/etc/yum.repos.d/fedora-pulp.repo
+  when: ansible_distribution != 'RedHat'
+
+- name: Install RHEL pulp repo
+  copy: src=rhel-pulp.repo dest=/etc/yum.repos.d/rhel-pulp.repo
+  when: ansible_distribution == 'RedHat'
+
+- yum: name={{ item }} state=present
+  with_items:
+    - httpd
+    - mongodb-server
+    - qpid-cpp-server
+    - qpid-cpp-server-store
+    - "@pulp-server"
+    - "@pulp-admin"
+    - "@pulp-server-qpid"
+    - pulp-docker-plugins
+
+- service: name=mongod enabled=yes state=started
+
+- service: name=qpidd enabled=yes state=started
+
+- name: init pulp db
+  shell: sudo -u apache pulp-manage-db
+
+- name: start and enable pulp workers
+  service: name=pulp_workers state=started enabled=yes
+
+- name: start and enable pulp celery_beat
+  service: name=pulp_celerybeat state=started enabled=yes
+
+- name: start and enable pulp resource manager
+  service: name=pulp_resource_manager state=started enabled=yes
+
+- name: start and enable httpd
+  service: name=httpd state=started enabled=yes
