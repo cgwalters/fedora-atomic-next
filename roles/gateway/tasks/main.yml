@@ -1,3 +1,4 @@
 ---
 - include: readonly-docker-registry.yml
+- include: base-images.yml
 # - include: pulp.yml

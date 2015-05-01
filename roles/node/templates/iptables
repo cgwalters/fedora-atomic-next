@@ -1,0 +1,36 @@
+# iptables rules to deny egress traffic except to the
+# gateway machine.
+#
+# {{ ansible_managed }}
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+
+# established connections and ICMP are fine
+-A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A OUTPUT -p icmp -j ACCEPT
+
+# DNS is OK, even if it won't do much
+-A OUTPUT -p tcp --dport 53 -j ACCEPT
+-A OUTPUT -p udp --dport 53 -j ACCEPT
+
+# gateway access
+-A OUTPUT -d walters-os1-gateway -j ACCEPT
+
+# Other nodes in the cluster
+{% for host in groups['masters'] %}
+-A OUTPUT -d {{ host }} -j ACCEPT
+{% endfor %}
+{% for host in groups['etcd'] %}
+-A OUTPUT -d {{ host }} -j ACCEPT
+{% endfor %}
+{% for host in groups['nodes'] %}
+-A OUTPUT -d {{ host }} -j ACCEPT
+{% endfor %}
+
+-A OUTPUT -d 127.0.0.1 -j ACCEPT
+
+-A OUTPUT -j REJECT --reject-with icmp-host-prohibited
+
+COMMIT

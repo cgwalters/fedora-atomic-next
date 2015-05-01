@@ -28,3 +28,6 @@
     - restart docker
   tags:
     - docker
+
+- name: Start docker
+  service: name=docker state=started enabled=true

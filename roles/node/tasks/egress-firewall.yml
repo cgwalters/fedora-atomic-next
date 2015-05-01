@@ -1,0 +1,9 @@
+# Firewall off this machine so it can only talk to the gateway
+---
+- name: iptables firewall
+  template: src=iptables dest=/etc/sysconfig/iptables mode=600 backup=yes
+  notify:
+    - restart iptables
+    - reload libvirtd
+  tags:
+    - firewall

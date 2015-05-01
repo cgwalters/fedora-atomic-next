@@ -2,14 +2,16 @@
 10.3.12.156
 
 [masters]
-192.168.42.9
+walters-os1-ac-master
 
 [etcd]
-192.168.42.9
+walters-os1-ac-master
+walters-os1-ac-00
 
 [nodes]
-192.168.42.10
-192.168.42.11
-192.168.42.12
+walters-os1-ac-00
+walters-os1-ac-01
 
-
+[minions]
+walters-os1-ac-00
+walters-os1-ac-01
